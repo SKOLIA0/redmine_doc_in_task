@@ -1,0 +1,15 @@
+en:
+  redmine_doc_in_task:
+    label_tracker: "Issue Tracker"
+    label_status: "Issue Status"
+    label_priority: "Issue Priority"
+    label_doc_category: "Document Category"
+    label_also_create_issue: "Create related issue"
+    label_settings: "Doc In Task Settings"
+    setting:
+      tracker_id: "Issue Tracker"
+      status_id: "Issue Status"
+      priority_id: "Issue Priority"
+      doc_category: "Document Category"
+      label_days_to_add: "Default number of days"
+      

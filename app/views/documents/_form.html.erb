@@ -1,0 +1,44 @@
+<%= error_messages_for @document %>
+<div class="box tabular">
+  <p><%= f.select :category_id, DocumentCategory.active.collect {|c| [c.name, c.id]} %></p>
+  <p><%= f.text_field :title, :required => true, :size => 60 %></p>
+  <p><%= f.text_area :description, :cols => 60, :rows => 15, :class => 'wiki-edit',
+                    :data => {
+                        :auto_complete => true
+                    } %></p>
+  <% @document.custom_field_values.each do |value| %>
+    <p><%= custom_field_tag_with_label :document, value %></p>
+  <% end %>
+   <% if @document.new_record? %>
+    <p><label><%=l(:label_attachment_plural)%></label><%= render :partial => 'attachments/form', :locals => {:container => @document} %></p>
+  <% end %>
+  <% if @document.new_record? %>
+    <p id="create_related_task_container" style="display:none;">
+      <%= check_box_tag 'create_related_task', '1', false %>
+      <%= label_tag 'create_related_task', 'Создать связанную задачу' %>
+    </p>
+  <% end %>
+</div>
+<%= wikitoolbar_for 'document_description' %>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var categorySelect = document.querySelector("select[name='document[category_id]']");
+        var createRelatedTaskContainer = document.getElementById("create_related_task_container");
+        var createRelatedTaskCheckbox = document.getElementById("create_related_task");
+
+        function updateRelatedTaskVisibility() {
+            var docCategoryId = parseInt('<%= Setting.plugin_redmine_doc_in_task["document_category_id"] %>', 10);
+            var selectedCategoryId = parseInt(categorySelect.value, 10);
+
+            if (selectedCategoryId === docCategoryId) {
+                createRelatedTaskContainer.style.display = "block";
+                createRelatedTaskCheckbox.checked = true;
+            } else {
+                createRelatedTaskContainer.style.display = "none";
+                createRelatedTaskCheckbox.checked = false;
+            }
+        }
+        categorySelect.addEventListener("change", updateRelatedTaskVisibility);
+        updateRelatedTaskVisibility(); // Вызываем функцию при загрузке страницы, чтобы установить правильное состояние видимости чекбокса
+    });
+</script>

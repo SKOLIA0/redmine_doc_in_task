@@ -1,0 +1,70 @@
+<%= form_for :settings, url: plugin_settings_path(@plugin.id), html: {id: 'plugin_settings_form'} do |f| %>
+  <div class="box tabular">
+    <p>
+      <%= f.label :document_category_id, "Категория документа" %>
+      <%= f.select :document_category_id, DocumentCategory.all.collect {|c| [c.name, c.id]}, {selected: Setting[:plugin_redmine_doc_in_task]['document_category_id']}, include_blank: true %>
+    </p>
+
+    <p>
+      <%= f.label :tracker_id, "Трекер задачи" %>
+      <%= f.select :tracker_id, Tracker.all.collect {|t| [t.name, t.id]}, {selected: Setting[:plugin_redmine_doc_in_task]['tracker_id']}, include_blank: true %>
+    </p>
+
+    <!-- Поле для выбора статуса задачи -->
+    <p>
+      <%= f.label :status_id, "Статус задачи" %>
+      <%= f.select :status_id, IssueStatus.all.collect {|s| [s.name, s.id]}, {selected: Setting[:plugin_redmine_doc_in_task]['status_id']}, include_blank: true %>
+    </p>
+
+    <!-- Поле для выбора приоритета задачи -->
+    <p>
+      <%= f.label :priority_id, "Приоритет задачи" %>
+      <%= f.select :priority_id, IssuePriority.all.collect {|p| [p.name, p.id]}, {selected: Setting[:plugin_redmine_doc_in_task]['priority_id']}, include_blank: true %>
+    </p>
+
+    <!-- Поле для ввода количества рабочих дней на задачу -->
+    <p>
+      <%= f.label :days_to_add, "Количество рабочих дней на задачу" %>
+      <%= f.number_field :days_to_add, min: 1, max: 999, value: Setting.plugin_redmine_doc_in_task['days_to_add'], required: true %>
+    </p>
+
+    <!--  флажок и поле ввода для подменны ссылки-->
+    <p>
+      <%= f.check_box :override_host, { id: 'override_host_checkbox', checked: Setting.plugin_redmine_doc_in_task['override_host'] == '1' } %>
+      <%= f.label :override_host, "Жестко изменить ссылку на документ" %>
+    </p>
+    
+    <p>
+      <%= f.check_box :copy_attachments_enabled, { id: 'copy_attachments_enabled_checkbox', checked: Setting.plugin_redmine_doc_in_task['copy_attachments_enabled'] == '1' } %>
+      <%= f.label :copy_attachments_enabled, "Включить дублирование файлов в задачу" %>
+   </p>
+    
+    <!--  флажок дублировать файлы в задачу-->
+    <p>
+      <%= f.label :host, "Хост:" %>
+      <%= f.text_field :host, value: Setting.plugin_redmine_doc_in_task['host'], disabled: Setting.plugin_redmine_doc_in_task['override_host'] != '1', id: 'host_input' %>
+    </p>
+  </div>
+  <div class="buttons">
+    <%= submit_tag l(:button_save) %>
+  </div>
+
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          var overrideHostCheckbox = document.getElementById('override_host_checkbox');
+          var hostInput = document.getElementById('host_input');
+
+          function updateHostInput() {
+              hostInput.disabled = !overrideHostCheckbox.checked;
+
+              if (overrideHostCheckbox.checked && hostInput.value === '') {
+                  var location = window.location;
+                  hostInput.value = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+              }
+          }
+
+          overrideHostCheckbox.addEventListener('change', updateHostInput);
+          updateHostInput();
+      });
+  </script>
+<% end %>

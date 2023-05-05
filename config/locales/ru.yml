@@ -1,0 +1,15 @@
+ru:
+  redmine_doc_in_task:
+    label_tracker: "Трекер задачи"
+    label_status: "Статус задачи"
+    label_priority: "Приоритет задачи"
+    label_doc_category: "Категория документа"
+    label_also_create_issue: "Создать связанную задачу"
+    label_settings: "Настройки Doc In Task"
+    setting:
+      tracker_id: "Трекер задачи"
+      status_id: "Статус задачи"
+      priority_id: "Приоритет задачи"
+      doc_category: "Категория документа"
+      label_days_to_add: "Количество дней по умолчанию"
+      
