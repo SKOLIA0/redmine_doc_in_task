@@ -2,8 +2,7 @@ require 'russian_workdays'
 
 module RedmineDocInTask
   class DocumentIssueCreator
-    def self.create_issue_from_document(document, assigned_to_id, host, params)
-      Rails.logger.debug "Creating issue from document with assigned_to_id: #{assigned_to_id}, host: #{host}"
+   def self.create_issue_from_document(document, host, params)
       issue = Issue.new
       settings = Setting.plugin_redmine_doc_in_task
       issue.tracker_id = settings['tracker_id'].to_i
@@ -12,17 +11,15 @@ module RedmineDocInTask
       issue.author_id = User.current.id
       issue.project = document.project
       issue.subject = document.title
-      issue.assigned_to_id = assigned_to_id
+      executor_field_id = document.available_custom_fields.find { |cf| cf.name == 'Исполнитель' }&.id.to_s #выбор исполнителя
+      assigned_to_id = params[:document][:custom_field_values][executor_field_id].first unless params[:document][:custom_field_values][executor_field_id].blank?
+      issue.assigned_to = User.find(assigned_to_id) if assigned_to_id.present?
       issue.start_date = Date.today
       issue.due_date = calculate_due_date(issue.start_date, settings['days_to_add'].to_i)
       issue.description = "Ссылка на документ: #{RedmineDocInTask.document_url(document, host)}"
-    if issue.save
-    Rails.logger.debug "Issue created successfully: #{issue.inspect}"
-    copy_attachments(document, issue)
-  else
-    Rails.logger.debug "Issue creation failed: #{issue.errors.full_messages.join(', ')}"
-  end
-end
+      issue.save
+      copy_attachments(document, issue)
+    end
 
     def self.copy_attachments(document, issue)
       # Проверяем, включено ли дублирование файлов в настройках плагина
