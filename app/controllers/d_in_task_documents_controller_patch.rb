@@ -12,11 +12,9 @@ module DInTaskDocumentsControllerPatch
     create_without_doc_in_task # Вызов оригинального метода create
     # Если документ успешно сохранен и параметр create_related_task равен 1
     if @document.persisted? && params[:create_related_task] == '1'
-      executor_field_id = @document.available_custom_fields.find { |cf| cf.name == 'Исполнитель' }&.id.to_s #выбор исполнителя
-      assigned_to_id = params[:document][:custom_field_values][executor_field_id].first unless params[:document][:custom_field_values][executor_field_id].blank?
       host = request.host_with_port # Получение хоста с портом
       # Создание связанной задачи на основе документа
-      RedmineDocInTask::DocumentIssueCreator.create_issue_from_document(@document, assigned_to_id, host, params)
+      RedmineDocInTask::DocumentIssueCreator.create_issue_from_document(@document, host, params)
     end
   end
 end
