@@ -9,7 +9,7 @@ Redmine::Plugin.register :redmine_doc_in_task do
   name 'Redmine Doc In Task plugin'
   author 'Слепченко Николай'
   description 'При создания документа добавлен чекбокс "Создать связанную задачу". Если категория документа совпадает с категорией, указанной в настройках плагина, чекбокс будет видимым и по умолчанию отмечен.'
-  version '0.1.0'
+  version '1.1.6'
   url 'https://t.me/NikolajSlep'
   author_url 'https://github.com/SKOLIA0'
 
