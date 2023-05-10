@@ -12,8 +12,8 @@ module RedmineDocInTask
       issue.project = document.project
       issue.subject = document.title
       executor_field_id = document.available_custom_fields.find { |cf| cf.name == 'Исполнитель' }&.id.to_s #выбор исполнителя
-      assigned_to_id = params[:document][:custom_field_values][executor_field_id].first unless params[:document][:custom_field_values][executor_field_id].blank?
-      issue.assigned_to = User.find(assigned_to_id) if assigned_to_id.present?
+      assigned_to_id = params[:document][:custom_field_values][executor_field_id] if params[:document][:custom_field_values][executor_field_id].present?
+      issue.assigned_to_id = assigned_to_id.to_i
       issue.start_date = Date.today
       issue.due_date = calculate_due_date(issue.start_date, settings['days_to_add'].to_i)
       issue.description = "Ссылка на документ: #{RedmineDocInTask.document_url(document, host)}"
